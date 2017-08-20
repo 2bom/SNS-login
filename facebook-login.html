@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Facebook login</title>
+</head>
+<body>
+ <!--facebook login-->
+<script>
+// facebook app에 로그인 하기 위한 기본 셋팅
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId            : '122942098348503',
+      autoLogAppEvents : true,
+      xfbml            : true,
+      status           : true,
+      version          : 'v2.10'
+    });
+    FB.AppEvents.logPageView();
+    
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+   
+   
+  // 유저 데이터 가져오기
+  function fb_getDatas() {
+      FB.api('/me', {fields: 'email'}, function(response) {
+             console.log(response);
+           });
+  }
+  
+  // 로그인 로직  
+  function fb_login() {
+      FB.login(function(){
+         fb_getDatas();
+      }, {scope: 'email'});
+   }
+   
+  // 로그인 되어있는지 확인하고 로그인 시키기 < login button 클릭시 시작
+  function myFacebookLogin() {
+     FB.getLoginStatus(function(response) {
+        if (response.status === 'connected') {
+            console.log('이미 로그인 되어있음');
+            fb_getDatas();
+        }
+        else {
+            console.log("로그인")
+            fb_login();
+        }
+     });
+  }
+    
+  // 로그아웃 로직 < logout button 클릭시 시작
+  function fb_logout() {
+    FB.logout(function(){
+      FB.getLoginStatus(function(response) {
+          if (response.status === 'connected') {
+            console.log('로그아웃 안됨');
+            fb_getDatas();
+          }
+          else {
+            console.log("로그아웃");
+          }
+      }); 
+    });
+  }
+</script>
+
+<h1>Facebook login example</h1>
+
+<button class="facebook-login" onclick="myFacebookLogin()">Login with Facebook</button>
+
+<button class="facebook-logout" onclick="fb_logout()">logout here</button>
+</body>
+</html>
